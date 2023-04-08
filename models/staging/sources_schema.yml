@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: steam_kaggle
+    database: dezoomcamp-steam-project
+    schema: steam_data
+
+    tables:
+      - name: steam_reviews_data
