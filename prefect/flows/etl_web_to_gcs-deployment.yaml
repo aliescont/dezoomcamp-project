@@ -1,0 +1,41 @@
+###
+### A complete description of a Prefect Deployment for flow 'etl-web-to-gcs'
+###
+name: Ingestion to GCS
+description: The main ETL function
+version: 978c418a3b9ae4850f77af7f2fb58ad6
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: etl-web-to-gcs
+manifest_path: null
+storage: null
+path: /home/aliciescont/Documents/Github/dezoomcamp-project/prefect/flows
+entrypoint: prefect_etl.py:etl_web_to_gcs
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    log_prints:
+      title: log_prints
+      default: true
+      position: 0
+  required: null
+  definitions: null
