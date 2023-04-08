@@ -4,7 +4,7 @@
         partition_by = {
             "field": "created_at",
             "data_type": "timestamp",
-            "granularity": "month"
+            "granularity": "day"
         },
         cluster_by = ['app_name']
     )
@@ -18,7 +18,7 @@ reviews as (
     select
         app_id,
         app_name,
-        timestamp_trunc(timestamp_created, month) as created_at,
+        timestamp_trunc(timestamp_created, day) as created_at,
         count(distinct review_id) as tot_reviews,
         count(distinct 
           case 
