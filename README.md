@@ -26,5 +26,9 @@ As future projects, this dataset can be enriched by using Steam Web API to add m
 - Terraform
 - Prefect
 - DBT
+- Looker Studio
+
+## Dashboard
+![Dashboard](home/aliciescont/Pictures/dashboard_steam_2.png)
 
 
