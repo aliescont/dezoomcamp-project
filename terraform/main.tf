@@ -47,3 +47,112 @@ resource "google_bigquery_dataset" "dataset" {
   project    = var.project
   location   = var.region
 }
+
+# Bigquery table
+# Ref: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/bigquery_table
+
+resource "google_bigquery_table" "default" {
+  dataset_id = var.BQ_DATASET
+  table_id   = var.BQ_TABLE
+
+  time_partitioning {
+    type = "DAY"
+    field = "timestamp_created"
+  }
+
+
+  schema = <<EOF
+[
+    {"name": "app_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    }, 
+    {"name": "app_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "review_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "language",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "review",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "timestamp_created",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+    },
+    {"name": "timestamp_updated",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+    },
+    {"name": "recommended",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+    },
+    {"name": "votes_helpful",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "votes_funny",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "weighted_vote_score",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+    },
+    {"name": "comment_count",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "steam_purchase",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+    },
+    {"name": "received_for_free",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+    },
+    {"name": "written_during_early_access",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_steamid",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_num_games_owned",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_num_reviews",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_playtime_forever",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_playtime_last_two_weeks",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_playtime_at_review",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+    },
+    {"name": "author_last_played",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+    }	
+]
+EOF
+
+deletion_protection = "false"
+}
