@@ -29,6 +29,6 @@ As future projects, this dataset can be enriched by using Steam Web API to add m
 - Looker Studio
 
 ## Dashboard
-![Dashboard](home/aliciescont/Pictures/dashboard_steam_2.png)
+![Dashboard](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dashboard_steam_2.png)
 
 
