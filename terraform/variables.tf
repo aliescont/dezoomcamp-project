@@ -24,3 +24,9 @@ variable "BQ_DATASET" {
   type = string
   default = "steam_data"
 }
+
+variable "BQ_TABLE" {
+  description = "BigQuery table that raw data (from GCS) will be written to"
+  type = string
+  default = "steam_reviews_data_2021"
+}
