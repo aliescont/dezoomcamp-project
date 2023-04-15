@@ -60,7 +60,6 @@ resource "google_bigquery_table" "default" {
     field = "timestamp_created"
   }
 
-
   schema = <<EOF
 [
     {"name": "app_id",
@@ -148,7 +147,7 @@ resource "google_bigquery_table" "default" {
     "mode": "NULLABLE"
     },
     {"name": "author_last_played",
-    "type": "TIMESTAMP",
+    "type": "FLOAT",
     "mode": "NULLABLE"
     }	
 ]

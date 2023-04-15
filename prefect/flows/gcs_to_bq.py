@@ -17,29 +17,29 @@ def extract_from_gcs(chunk_number: int) -> Path:
 @task(log_prints=True)
 def write_bq(df: pd.DataFrame) -> None:
     """Write DataFrame to BiqQuery"""
-
     gcp_credentials_block = GcpCredentials.load("dezoomcamp-creds")
     print(f"rows: {len(df)}")
     print(f"columns: {df.dtypes}")
     df.to_gbq(
-        destination_table="steam_data.steam_reviews_data",
+        destination_table="steam_data.steam_reviews_data_2021",
         project_id="dezoomcamp-steam-project",
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
-        chunksize=1000000,
         if_exists="append",
     )
 
 @flow(log_prints=True)
 def etl_gcs_to_bq(chunk_number: int):
-    """Main ETL flow to load data into Big Query"""
+    """Main ETL flow to load data into Big Query in batches"""
     path = extract_from_gcs(chunk_number)
     print(path)
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, index_col=0)
+    print(df.head())
     df["timestamp_created"] = pd.to_datetime(df["timestamp_updated"])
     df["timestamp_updated"] = pd.to_datetime(df["timestamp_updated"])
     write_bq(df)
 
 
 if __name__ == "__main__":
-    for i in range(22): 
+    n_chunks = 2
+    for i in range(n_chunks): 
         etl_gcs_to_bq(i)
