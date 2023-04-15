@@ -1,12 +1,12 @@
 from prefect.deployments import Deployment
 from prefect.infrastructure.docker import DockerContainer
-from prefect_etl import etl_web_to_gcs
+from ingest_to_gcs import kaggle_to_gcs
 
-docker_block = DockerContainer.load("docker-steam")
+docker_block = DockerContainer.load("etl-prefect-docker")
 
 docker_dep = Deployment.build_from_flow(
-    flow=etl_web_to_gcs,
-    name="docker-flow",
+    flow=kaggle_to_gcs,
+    name="docker-etl-flow",
     infrastructure=docker_block,
 )
 
