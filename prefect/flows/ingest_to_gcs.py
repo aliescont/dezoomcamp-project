@@ -9,7 +9,6 @@ os.environ['KAGGLE_KEY'] = "61c51b9c97987be49810bc909802542a"
 from kaggle.api.kaggle_api_extended import KaggleApi
 import time
 
-
 @task(log_prints=True, retries = 3)
 def download_dataset(kaggle_url:str) -> Path:
     """Download dataset from Kaggle using Kagle API and return the path where dataset is stored"""
@@ -24,22 +23,10 @@ def download_dataset(kaggle_url:str) -> Path:
     return final_path
 
 @task()
-def clean(df: pd.DataFrame) -> pd.DataFrame:
+def filter_df(df: pd.DataFrame) -> pd.DataFrame:
     """Fix dtype issues and removing characters that are causing issues during ingestion"""
     #Filtering by reviews in english
     df = df[df['language'] == 'english']
-    df['review'] = df['review'].str.replace('\W', ' ', regex=True)
-    df['review'] = df['review'].str.replace('\\n', ' ', regex = True)
-    df["timestamp_created"] = pd.to_datetime(df["timestamp_updated"], utc=True, unit='s')
-    df["timestamp_updated"] = pd.to_datetime(df["timestamp_updated"], utc=True, unit='s')
-    df.rename(columns={"author.steamid": "author_steamid",
-                       "author.num_games_owned" : "author_num_games_owned", 
-                       'author.num_reviews' : 'author_num_reviews',
-                       'author.playtime_forever' : 'author_playtime_forever', 
-                       'author.playtime_last_two_weeks' : 'author_playtime_last_two_weeks',
-                       'author.playtime_at_review' : 'author_playtime_at_review', 
-                       'author.last_played' : 'author_last_played'
-                       }, inplace = True)
     df = df.reset_index(drop=True)
     print(df.head(2))
     print(f"columns: {df.dtypes}")
@@ -49,7 +36,33 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
 @task()
 def df_chunk_to_csv(df: pd.DataFrame, dataset_file: str, index_file: int) -> Path:
     """Write DataFrame out locally as csv file"""
+    df_schema = {
+        'app_id' : 'int64',
+        'app_name' : 'str',
+        'review_id' : 'str',
+        'language' : 'str',
+        'review' : 'str',
+        'recommended' : 'bool',
+        'votes_helpful' : 'int64',
+        'votes_funny' : 'int64',
+        'weighted_vote_score' : 'float',
+        'comment_count' : 'float',
+        'steam_purchase' : 'bool',
+        'received_for_free' : 'bool',
+        'written_during_early_access' : 'bool',
+        'author.steamid' : 'int64',
+        'author.num_games_owned' : 'float',
+        'author.num_reviews' : 'float',
+        'author.playtime_forever' : 'float',
+        'author.playtime_last_two_weeks' : 'float',
+        'author.playtime_at_review' : 'float',
+        'author.last_played' : 'float'
+    }
+    #df["timestamp_created"] = pd.to_datetime(df["timestamp_updated"], utc=True, unit='s')
+    #df["timestamp_updated"] = pd.to_datetime(df["timestamp_updated"], utc=True, unit='s')
     path = Path(f"{dataset_file}_{index_file}.csv") 
+    df = df.astype(df_schema)
+    df.dropna(inplace=True)
     df.to_csv(path)
     return path
 
@@ -63,10 +76,10 @@ def write_gcs(path: Path, gcs_path: Path) -> None:
 @flow(log_prints=True)
 def ingest_chunk_gcs(df, i, input_path):
     """Ingest each chunk in GCS"""
-    chunk_df = clean(df)
-    chunk_file_path = df_chunk_to_csv(chunk_df, input_path, i)
+    #chunk_df = filter_df(df)
+    chunk_file_path = df_chunk_to_csv(df, input_path, i)
     print(chunk_file_path)
-    output_path = Path(f"data/steam_reviews_{i}.csv")
+    output_path = Path(f"data/steam_reviews_{i:02}.csv")
     write_gcs(chunk_file_path, output_path)
     time.sleep(5)
     return
@@ -78,11 +91,11 @@ def kaggle_to_gcs() -> None:
     print(data_path)
     source_path = data_path +'.csv'
     print(source_path)
-    for i, chunk in enumerate(pd.read_csv(source_path, iterator=True, chunksize=5000000, index_col= 0)):
+    for i, chunk in enumerate(pd.read_csv(source_path, iterator=True, chunksize=500000, index_col= 0)):
         # if i > n_chunks-1:
         #     break
         ingest_chunk_gcs(chunk, i, data_path)
-        # time.sleep(5)
+        time.sleep(5)
         
             
 if __name__ == "__main__":

@@ -56,7 +56,7 @@ resource "google_bigquery_table" "default" {
   table_id   = var.BQ_TABLE
 
   time_partitioning {
-    type = "DAY"
+    type = "YEAR"
     field = "timestamp_created"
   }
 
@@ -107,7 +107,7 @@ resource "google_bigquery_table" "default" {
     "mode": "NULLABLE"
     },
     {"name": "comment_count",
-    "type": "INTEGER",
+    "type": "FLOAT",
     "mode": "NULLABLE"
     },
     {"name": "steam_purchase",
@@ -127,11 +127,11 @@ resource "google_bigquery_table" "default" {
     "mode": "NULLABLE"
     },
     {"name": "author_num_games_owned",
-    "type": "INTEGER",
+    "type": "FLOAT",
     "mode": "NULLABLE"
     },
     {"name": "author_num_reviews",
-    "type": "INTEGER",
+    "type": "FLOAT",
     "mode": "NULLABLE"
     },
     {"name": "author_playtime_forever",
