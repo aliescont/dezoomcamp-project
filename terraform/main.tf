@@ -56,26 +56,50 @@ resource "google_bigquery_table" "default" {
   table_id   = var.BQ_TABLE
 
   time_partitioning {
-    type = "YEAR"
+    type = "MONTH"
     field = "timestamp_created"
   }
 
   schema = <<EOF
 [
-    {"name": "app_id",
+    {"name": "steamid",
     "type": "INTEGER",
     "mode": "NULLABLE"
     }, 
-    {"name": "app_name",
-    "type": "STRING",
-    "mode": "NULLABLE"
-    },
-    {"name": "review_id",
+    {"name": "appid",
     "type": "INTEGER",
     "mode": "NULLABLE"
     },
-    {"name": "language",
-    "type": "STRING",
+    {"name": "voted_up",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+    },
+    {"name": "votes_up",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "votes_funny",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "weighted_vote_score",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+    },
+    {"name": "playtime_forever",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "playtime_at_review",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "num_games_owned",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    },
+    {"name": "num_reviews",
+    "type": "INTEGER",
     "mode": "NULLABLE"
     },
     {"name": "review",
@@ -89,67 +113,7 @@ resource "google_bigquery_table" "default" {
     {"name": "timestamp_updated",
     "type": "TIMESTAMP",
     "mode": "NULLABLE"
-    },
-    {"name": "recommended",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE"
-    },
-    {"name": "votes_helpful",
-    "type": "INTEGER",
-    "mode": "NULLABLE"
-    },
-    {"name": "votes_funny",
-    "type": "INTEGER",
-    "mode": "NULLABLE"
-    },
-    {"name": "weighted_vote_score",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "comment_count",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "steam_purchase",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE"
-    },
-    {"name": "received_for_free",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE"
-    },
-    {"name": "written_during_early_access",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_steamid",
-    "type": "INTEGER",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_num_games_owned",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_num_reviews",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_playtime_forever",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_playtime_last_two_weeks",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_playtime_at_review",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    },
-    {"name": "author_last_played",
-    "type": "FLOAT",
-    "mode": "NULLABLE"
-    }	
+    }
 ]
 EOF
 
