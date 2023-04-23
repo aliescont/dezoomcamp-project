@@ -119,3 +119,55 @@ EOF
 
 deletion_protection = "false"
 }
+
+resource "google_bigquery_table" "default_dim" {
+  dataset_id = var.BQ_DATASET
+  table_id   = var.BQ_DIM_TABLE
+
+  schema = <<EOF
+[
+    {"name": "appid",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+    }, 
+    {"name": "name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "short_description",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "developer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "publisher",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "genre",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "tags",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "categories",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "languages",
+    "type": "STRING",
+    "mode": "NULLABLE"
+    },
+    {"name": "release_date",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+    }
+]
+EOF
+
+deletion_protection = "false"
+}

@@ -3,10 +3,9 @@ import pandas as pd
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 import os
-import zipfile
 from kaggle.api.kaggle_api_extended import KaggleApi
-import time
 import re
+from ingest_dimensions_gcs import ingest_dim_to_gcs
 
 @task(log_prints=True, retries = 3)
 def download_dataset(kaggle_url:str) -> list:
@@ -64,6 +63,7 @@ def ingest_chunk_gcs(input_path):
 @flow(log_prints=True)
 def kaggle_to_gcs() -> None:
     """The main ETL function"""    
+    ingest_dim_to_gcs()
     file_path_list = download_dataset('forgemaster/steam-reviews-dataset')
     for file in file_path_list:
         ingest_chunk_gcs(file)

@@ -31,3 +31,9 @@ variable "BQ_TABLE" {
   default = "steam_reviews_kaggle"
 }
 
+variable "BQ_DIM_TABLE" {
+  description = "BigQuery table that raw data (from GCS) will be written to"
+  type = string
+  default = "steam_games"
+}
+
