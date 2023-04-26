@@ -58,6 +58,34 @@ prefect deployment run kaggle-to-gcs/docker-etl-flow
 
 ### Prefect
 
-The deployments can be created using the Prefect UI or 
-Copy service account key in make_gcp_blocks.py
-IMPORTANT -> don't make this file public with your credentials
+- Install prefect 
+```shell
+pip install -r requirements.txt
+```
+- Create Blocks
+To create blocks run the python scripts in blocks folder
+Please note that to create blocks using scripts, you'll need to provide your service account key and API token for dbt. Don't make this information public.
+
+```shell
+#ingest data to GCS
+python make_gcp_blocks.py
+
+#create a Docker block to run deployment using a Docker image
+python make_docker_blocks.py
+
+#Create a dbt Cloud credentials block to be able to run a dbt job using a Prefect deployment
+python make_dbt_creds_blocks.py
+```
+
+The deployments can be created using the Prefect UI or by running the corresponding Python scripts in the prefect folder
+
+```shell
+#ingest data to GCS
+python docker-deploy.py
+
+#load ingested data to GCS into BigQuery
+python docker-bq-deploy.py
+
+#run a dbt job
+python dbt-cloud.py
+```
