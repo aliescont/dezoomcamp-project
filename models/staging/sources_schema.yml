@@ -6,4 +6,5 @@ sources:
     schema: steam_data
 
     tables:
-      - name: steam_reviews_data
+      - name: steam_reviews_kaggle
+      - name: steam_games
