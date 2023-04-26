@@ -20,6 +20,7 @@ steam_reviews as (
     select
         *
     from {{ ref('stg_steam_games') }}
+    where game_name is not null
 )
 
 select
