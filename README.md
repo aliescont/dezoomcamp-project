@@ -35,8 +35,12 @@ As future projects, this pipeline can be used as the first step for a game recom
 
 ## End-End pipeline
 
-![Diagram]()
+- GCS Bucket, dataset and BigQuery tables for sources are created using Terraform
 
+![Diagram](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dezoomcamp-steam_diagram.png)
+
+![DBT Lineage](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_steam_lineage.png)
+ 
 ## Dashboard
 ![Dashboard](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dashboard_steam_2.png)
 
