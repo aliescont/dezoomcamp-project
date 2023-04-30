@@ -2,7 +2,7 @@
 
 - Create a virtual environment. I used conda.
 - Create a new project in GCP.
-- Create a IAM Service Account Key
+- Create a IAM Service Account Key.
 - Create a DBT Cloud account 
 - Create a Kaggle account.
 - Create a Prefect Cloud account. This step is not mandatory.
@@ -22,39 +22,32 @@ This will download the kaggle.json file. Copy this file in prefect/.kaggle folde
     - After creating a service account, in the service account dashboard go to Actions and click manage keys.
     - Click ADD Key -> Create Key -> Select JSON. This will download a json file, save it, you'll need it later.
 - Install SDK
+- Run the following commands, by updating the correct path for the service account key recently downloaded. This will allow you to have your local setup authenticated with the Cloud SDK.
+
+```shell
+export GOOGLE_APPLICATION_CREDENTIALS="<service account key json path>"
+
+gcloud auth application-default login
+```
+After running the last command, type Y, when prompted and login in the same Google account where you set GCP.
 
 ### Terraform
-- Install Terraform in your OS by following ![these instructions[(https://developer.hashicorp.com/terraform/downloads)
-### Docker
-To create a deployment in Prefect using docker, I created a Docker image. The steps followed to create the image were 
+Terraform will be used to create dataset, GCS bucket and tables for ingesting data
 
+- Step 1: Install Terraform in your OS by following ![these instructions[(https://developer.hashicorp.com/terraform/downloads)
+- Step 2: Update variables name as needed.
+    - Go to terraform folder variables.tf and updated variable names, for each case.
+- Step 3: Run terraform to create GCP resources. 
 ```shell
-docker image build -t aliescont/steam-reviews:dezoomcamp .
+terraform init
 
-docker login 
+terraform plan
 
-docker image push aliescont/steam-reviews:dezoomcamp
+terraform apply
 ```
-To use that image, the deployment created in Prefect makes reference to that image.
+Please note that if it's not the first time you run Terraform, you can have .terraform.tfstate and .terraform.lock.hcl, delete those files and run terraform apply again
 
-```shell
-python3 docker_deploy.py
-```
-This will create a deployment in the prefect UI
-
-To set the Profile to start agent in Prefect to run the deployment you need to set the PREFECT_API_URL
-
-```shell
-prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
-
-prefect agent start -q default
-```
-
-Finally to run the deployment 
-
-```shell
-prefect deployment run kaggle-to-gcs/docker-etl-flow
-```
+Tables for ingestion depends on create dataset resource, meaning Terraform first creates dataset and then tables in that dataset. 
 
 ### Prefect
 
@@ -89,3 +82,53 @@ python docker-bq-deploy.py
 #run a dbt job
 python dbt-cloud.py
 ```
+
+After creating the deployments, you can run it 
+
+```shell
+#ingest data to GCS
+prefect deployment run kaggle-to-gcs/docker-ingest-flow	
+
+#load ingested data to GCS into BigQuery
+prefect deployment run etl-gcs-to-bq/docker-bq-flow	
+
+```
+
+#### Docker
+To create a deployment in Prefect using docker, I created a Docker image. The steps followed to create the image were 
+
+```shell
+docker image build -t aliescont/steam-reviews:dezoomcamp .
+
+docker login 
+
+docker image push aliescont/steam-reviews:dezoomcamp
+```
+To use that image, the deployment created in Prefect makes reference to that image.
+
+```shell
+python3 docker_deploy.py
+```
+This will create a deployment in the prefect UI
+
+To set the Profile to start agent in Prefect to run the deployment you need to set the PREFECT_API_URL
+
+```shell
+prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
+
+prefect agent start -q default
+```
+
+Finally to run the deployment 
+
+```shell
+prefect deployment run kaggle-to-gcs/docker-etl-flow
+```
+
+### DBT Cloud
+Step 1 -> Create a dbt cloud account. 
+Step 2 -> Fork this repo.
+Step 3 -> Connect your dbt cloud account with Github repo where you fork this repo.
+Step 4 -> In the Account settings of your dbt cloud account make sure to use service account key downloaded before.
+Step 5 -> After running prefect flows for ingesting data into a Data Lake and then into BigQuery, update sources in dbt project as needed with the corresponding project_id and create a dbt cloud job with dbt run command.
+Step 6 -> Run dbt job to visualize data.
