@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: steam_kaggle
-    database: dezoomcamp-steam-project
+    database: dezoomcamp-steam
     schema: steam_data
 
     tables:
