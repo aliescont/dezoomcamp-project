@@ -3,14 +3,12 @@ import pandas as pd
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 import os
-os.environ['KAGGLE_USERNAME'] = "aliescont"
-os.environ['KAGGLE_KEY'] = "61c51b9c97987be49810bc909802542a"
 from kaggle.api.kaggle_api_extended import KaggleApi
 import time
 
 
 @task(log_prints=True, retries = 3)
-def download_dataset(kaggle_url:str) -> str:
+def download_dim_dataset(kaggle_url:str) -> str:
     """Download dataset to be used as dimensions from Kaggle using Kagle API and return the path where dataset is stored"""
     api = KaggleApi()
     api.authenticate()
@@ -24,7 +22,7 @@ def download_dataset(kaggle_url:str) -> str:
 
 
 @task(log_prints=True, retries = 3)
-def csv_to_df(filename: str) -> str :
+def csv_to_df_dim(filename: str) -> str :
     full_path = Path(filename + 'steam_games.json')
     df = pd.read_json(full_path, orient='index', encoding='utf-8')
     #df = df[['appid', 'genre', 'languages']]
@@ -38,7 +36,7 @@ def csv_to_df(filename: str) -> str :
     return final_path
 
 @task(log_prints=True)
-def write_gcs(path: Path) -> None:
+def write_gcs_dim(path: Path) -> None:
     """Upload local csv file to GCS"""
     gcs_path = os.path.join('data/steam_games/dimensions',os.path.basename(path))
     gcs_block = GcsBucket.load("dezoomcamp-steam-gcs")
@@ -49,9 +47,9 @@ def write_gcs(path: Path) -> None:
 @flow(log_prints=True)
 def ingest_dim_to_gcs() -> None:
     """The main ETL function"""    
-    file_path = download_dataset('tristan581/all-55000-games-on-steam-november-2022')
-    dim_path = csv_to_df(file_path)
-    write_gcs(dim_path)
+    file_path = download_dim_dataset('tristan581/all-55000-games-on-steam-november-2022')
+    dim_path = csv_to_df_dim(file_path)
+    write_gcs_dim(dim_path)
     return
 
 if __name__ == "__main__":

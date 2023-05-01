@@ -8,7 +8,7 @@ import re
 import time
 
 @task(retries=3, log_prints=True)
-def extract_from_gcs() -> str:
+def extract_dim_from_gcs() -> str:
     """Download steam reviews data from GCS bucket"""
     gcs_path = f"data/steam_games/dimensions/steam_games_v1.csv"
     gcs_block = GcsBucket.load("dezoomcamp-steam-gcs")
@@ -16,7 +16,7 @@ def extract_from_gcs() -> str:
     return gcs_path
 
 @task
-def gcs_to_df(file_path: str) -> pd.DataFrame:
+def gcs_dim_to_df(file_path: str) -> pd.DataFrame:
     """Convert each csv to a dataframe"""
     df = pd.read_csv(file_path,index_col=0)
     df = df[['appid', 'name', 'short_description', 'developer', 'publisher', 'genre', 'tags','categories', 'languages','release_date']]
@@ -27,14 +27,14 @@ def gcs_to_df(file_path: str) -> pd.DataFrame:
     return df
 
 @task(log_prints=True)
-def write_bq(df: pd.DataFrame) -> None:
+def write_dim_bq(df: pd.DataFrame) -> None:
     """Write DataFrame to BiqQuery in chunks"""
     gcp_credentials_block = GcpCredentials.load("dezoomcamp-gcp-creds")
     print(f"rows: {len(df)}")
     print(f"columns: {df.dtypes}")
     df.to_gbq(
         destination_table="steam_data.steam_games",
-        project_id="dezoomcamp-steam-project",
+        project_id="dezoomcamp-steam",
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
         if_exists="append"
     )
@@ -43,9 +43,9 @@ def write_bq(df: pd.DataFrame) -> None:
 @flow()
 def etl_gcs_dim_to_bq() -> None:
     """Main flow that extracts data from GCS and creates a subflow to ingest each chunk into a BigQuery table"""
-    gcp_path = extract_from_gcs()
-    df = gcs_to_df(gcp_path)
-    write_bq(df)
+    gcp_path = extract_dim_from_gcs()
+    df = gcs_dim_to_df(gcp_path)
+    write_dim_bq(df)
     return 
 
 
