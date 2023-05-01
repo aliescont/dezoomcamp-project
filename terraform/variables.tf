@@ -4,7 +4,7 @@ locals {
 
 variable "project" {
   description = "Your GCP Project ID"
-  default = "dezoomcamp-steam-project"
+  default = "dezoomcamp-steam"
   type = string
 }
 

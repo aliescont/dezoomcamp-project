@@ -118,7 +118,9 @@ resource "google_bigquery_table" "default" {
 EOF
 
 deletion_protection = "false"
+depends_on = [google_bigquery_dataset.dataset]
 }
+
 
 resource "google_bigquery_table" "default_dim" {
   dataset_id = var.BQ_DATASET
@@ -170,4 +172,5 @@ resource "google_bigquery_table" "default_dim" {
 EOF
 
 deletion_protection = "false"
+depends_on = [google_bigquery_dataset.dataset]
 }
