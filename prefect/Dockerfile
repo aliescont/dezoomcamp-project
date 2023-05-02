@@ -7,4 +7,5 @@ RUN pip install -r requirements.txt --trusted-host pypi.python.org --no-cache-di
 COPY ./.kaggle/kaggle.json /root/.kaggle/kaggle.json
 
 COPY /flows /opt/prefect/flows
+
 RUN mkdir -p /opt/data

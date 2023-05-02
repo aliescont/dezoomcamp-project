@@ -7,14 +7,14 @@
 - Create a Kaggle account.
 - Create a Prefect Cloud account. This step is not mandatory.
 
-### Kaggle
+## Kaggle
 To use Kaggle API, we need to have an account.
 Go to Account and create New API Token. 
 
 ![Kaggle API](images/kaggle_api.png)
 This will download the kaggle.json file. Copy this file in prefect/.kaggle folder
 
-### GCP
+## GCP
 - Create a GCP free account
 - Create a new project (I've used dezoomcamp-steam)
 - Create a Service Account by going to IAM -> Service Accounts -> create a service account
@@ -31,7 +31,7 @@ gcloud auth application-default login
 ```
 After running the last command, type Y, when prompted and login in the same Google account where you set GCP.
 
-### Terraform
+## Terraform
 Terraform will be used to create dataset, GCS bucket and tables for ingesting data
 
 - Step 1: Install Terraform in your OS by following ![these instructions[(https://developer.hashicorp.com/terraform/downloads)
@@ -45,71 +45,76 @@ terraform plan
 
 terraform apply
 ```
-Please note that if it's not the first time you run Terraform, you can have .terraform.tfstate and .terraform.lock.hcl, delete those files and run terraform apply again
 
 Tables for ingestion depends on create dataset resource, meaning Terraform first creates dataset and then tables in that dataset. 
 
-### Prefect
+## Prefect
 
-- Install prefect 
-```shell
-pip install -r requirements.txt
-```
-- Create Blocks
-To create blocks run the python scripts in blocks folder
-Please note that to create blocks using scripts, you'll need to provide your service account key and API token for dbt. Don't make this information public.
+### Run prefect using Docker
+To create a deployment in Prefect using Docker, I created a Docker image in Prefect folder. The steps followed to create the image were 
 
 ```shell
-#ingest data to GCS
-python make_gcp_blocks.py
-
-#create a Docker block to run deployment using a Docker image
-python make_docker_blocks.py
-
-#Create a dbt Cloud credentials block to be able to run a dbt job using a Prefect deployment
-python make_dbt_creds_blocks.py
-```
-
-The deployments can be created using the Prefect UI or by running the corresponding Python scripts in the prefect folder
-
-```shell
-#ingest data to GCS
-python docker-deploy.py
-
-#load ingested data to GCS into BigQuery
-python docker-bq-deploy.py
-
-#run a dbt job
-python dbt-cloud.py
-```
-
-After creating the deployments, you can run it 
-
-```shell
-#ingest data to GCS
-prefect deployment run kaggle-to-gcs/docker-ingest-flow	
-
-#load ingested data to GCS into BigQuery
-prefect deployment run etl-gcs-to-bq/docker-bq-flow	
-
-```
-
-#### Docker
-To create a deployment in Prefect using docker, I created a Docker image. The steps followed to create the image were 
-
-```shell
+#update image name with your Docker image
 docker image build -t aliescont/steam-reviews:dezoomcamp .
 
 docker login 
 
 docker image push aliescont/steam-reviews:dezoomcamp
 ```
-To use that image, the deployment created in Prefect makes reference to that image.
+
+### Prefect Blocks
+Blocks in Prefect allow us to interact with other tools in a safe environment. In this project blocks are set through Python scripts.
+
+For GCP credentials block, you'll need to copy your service account key in make_gcp_blocks.py. Make sure to keep this information private.
 
 ```shell
-python3 docker_deploy.py
+#block needed to upload data into GCS and BigQuery. 
+python blocks/make_gcp_blocks.py
 ```
-This will create a deployment in the prefect UI
+
+After the Docker image is pushed to Docker Hub, update blocks/make_docker_blocks.py with Docker image and run Python script to create a Docker block in Prefect.
+
+```shell
+#create a Docker block to run deployment using a Docker image
+python make_docker_blocks.py
+
+```
+To run dbt models using a Prefect deployment, we'll need to create blocks for dbt CLI profile and targer config for BigQuery. This will allow to run dbt commands using GCP credentials blocks, without the need to create profiles.yml. Update for profile variables, as needed in blocks/make_dbt_creds_cli_block.py
+
+```shell
+#Create a block for dbt cli to use prefect-dbt to run models using a Prefect deployment
+python make_dbt_creds_cli_block.py
+```
+
+This blocks can be also configured using the Prefect UI.
+
+
+### Prefect deployments
+
+After creating Prefect blocks, we're able to create Prefect deployments
+
+#### Step 1 -> First, run python scripts to create deployments
+
+```shell
+python3 docker-deploy.py
+```
+
+This will create a deployment in the prefect UI called kaggle-to-gcs/docker-ingest-flow that will download data from Kaggle and ingest it in batches in a GCS bucket.
+
+```shell
+python3 docker-bq-deploy.py
+```
+
+This will create a deployment in the prefect UI called etl-gcs-to-bq/docker-bq-flow that will ingest data from GCS bucket to BigQuery tables, which are going to be used as sources in dbt for do transformations.
+
+
+```shell
+python3 dbt_cli_deploy.py
+```
+
+This will create a deployment in the prefect UI called trigger-dbt-cli-run/dbt-core-cli-run that will create dbt models in production dataset.
+
+#### Step 2 -> set Prefect agent to run deployments
 
 To set the Profile to start agent in Prefect to run the deployment you need to set the PREFECT_API_URL
 
@@ -119,13 +124,27 @@ prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
 prefect agent start -q default
 ```
 
-Finally to run the deployment 
+#### Step 3 -> Run deployments
+
+First, download datasets and ingest data into GCS bucket
 
 ```shell
-prefect deployment run kaggle-to-gcs/docker-etl-flow
+prefect deployment run kaggle-to-gcs/docker-ingest-flow
 ```
 
-### DBT Cloud
+Then, ingest data in buckets into BigQuery
+
+```shell
+prefect deployment run etl-gcs-to-bq/docker-bq-flow 
+```
+
+Finally, run dbt models in dbt cli
+```shell
+prefect deployment run trigger-dbt-cli-run/dbt-core-cli-run
+```
+
+## DBT Cloud
+In Prefect section we're using dbt core to run dbt models in production. Another option is to run dbt cloud
 Step 1 -> Create a dbt cloud account. 
 Step 2 -> Fork this repo.
 Step 3 -> Connect your dbt cloud account with Github repo where you fork this repo.

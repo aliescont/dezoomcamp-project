@@ -11,7 +11,7 @@ credentials_block.save("dezoomcamp-gcp-creds", overwrite=True)
 
 bucket_block = GcsBucket(
     gcp_credentials=GcpCredentials.load("dezoomcamp-gcp-creds"),
-    bucket="steam_data_lake_dezoomcamp-steam-project",  
+    bucket="steam_data_lake_dezoomcamp-steam",   
 )
 
 bucket_block.save("dezoomcamp-steam-gcs", overwrite=True)

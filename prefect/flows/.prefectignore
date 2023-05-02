@@ -10,8 +10,6 @@ __pycache__/
 
 # Type checking artifacts
 .mypy_cache/
-.dmypy.json
-dmypy.json
 .pyre/
 
 # IPython
