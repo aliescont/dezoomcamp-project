@@ -1,6 +1,6 @@
 # dezoomcamp-project
 
-This is the final projet of [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
+This is the final project of [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
 
 ## Problem description
 Steam is a popular video game distribution platform. According to [Steam Usage and Catalog Stats for 2022](https://backlinko.com/steam-users) in 2022 had 120 million monthly active users, with more than half accessing to the platform at least once a day, which can give us information to analyse the popularity of a video game.   
@@ -39,13 +39,17 @@ I've used 2 dataset from Kaggle:
 - DBT
 - Looker Studio
 
+## Folder structure
+
+- In ![prefect folder](https://github.com/aliescont/dezoomcamp-project/blob/main/prefect/README.md) you'll find all steps for ELT
+
 ## End-End pipeline
 
 Some of the considerations taken when building this pipeline
 
-- GCS Bucket, dataset and BigQuery tables for sources are created using IaC (Terraform).
-- The datasets used for this project have being extracted from the Steam API at a given time. So, batch processing was selected to ingest this static data into batches to optimize ingestion, but there is no need to use for this use case streaming processing.
-- Data about users' reviews ingested into BigQuery, used as dbt sources, is partitioned by the month in which reviews were created. This was done to optimize query performance when analysing users' reviews in a specific time frame.
+- GCS Bucket, dataset and BigQuery tables for sources are created using IaC (Terraform).  
+- The datasets used for this project have being extracted from the Steam API at a given time. So, batch processing was selected to ingest this static data into batches to optimize ingestion, but there is no need to use for this use case streaming processing.  
+- Data about users' reviews ingested into BigQuery, used as dbt sources, is partitioned by the month in which reviews were created. This was done to optimize query performance when analysing users' reviews in a specific time frame.  
 
 ![Diagram](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dezoomcamp-steam_diagram.png)
 
