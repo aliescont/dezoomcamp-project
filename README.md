@@ -54,6 +54,6 @@ Some of the considerations taken when building this pipeline
 ![DBT Lineage](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_steam_lineage.png)
  
 ## Dashboard
-![Dashboard]()
+![Dashboard](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dashboard_steam_reviews_agg.png)
 
 

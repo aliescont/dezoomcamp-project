@@ -99,7 +99,9 @@ To run dbt models using a Prefect deployment, we'll need to create blocks for db
 python make_dbt_cli_block.py
 ```
 
-This blocks can be also configured using the Prefect UI.
+This blocks can be also configured using the Prefect UI. 
+
+At the end you should have these ![blocks in Prefect UI](https://github.com/aliescont/dezoomcamp-project/blob/main/images/prefect_blocks.png)
 
 
 ### Prefect deployments
@@ -127,6 +129,8 @@ python3 flows/dbt_cli_deploy.py
 
 This will create a deployment in the prefect UI called trigger-dbt-cli-run/dbt-core-cli-run that will create dbt models in production dataset.
 
+At the end you should have these 3 ![deployments in Prefect UI](https://github.com/aliescont/dezoomcamp-project/blob/main/images/prefect_deployments.png)
+
 #### Step 2 -> set Prefect agent to run deployments
 
 To set the Profile to start agent in Prefect to run the deployment you need to set the PREFECT_API_URL
@@ -144,17 +148,22 @@ First, download datasets and ingest data into GCS bucket by running this deploym
 ```shell
 prefect deployment run kaggle-to-gcs/docker-ingest-flow
 ```
+This will ingest data in the GCS bucket created using Terraform. The prefect deployment will look like ![this](https://github.com/aliescont/dezoomcamp-project/blob/main/images/ingest_data_prefect.png)
 
-Then, ingest data in buckets into BigQuery
+Then, ingest data in buckets into BigQuery tables
 
 ```shell
 prefect deployment run etl-gcs-to-bq/docker-bq-flow 
 ```
+```
+The prefect deployment will look like ![this](https://github.com/aliescont/dezoomcamp-project/blob/main/images/gcs_to_bq.png)
+
 
 Finally, run dbt models in dbt cli
 ```shell
-prefect deployment run trigger-dbt-cli-run/dbt-core-cli-run
+prefect deployment run tvrigger-dbt-cli-run/dbt-core-cli-run
 ```
+This will create tables in production dataset and Prefect deployment logs will look like ![this](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_cli.png)
 
 ## DBT Cloud
 In Prefect section we're using dbt core to run dbt models in production. Another option is to run dbt cloud
