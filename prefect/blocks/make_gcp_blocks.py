@@ -4,6 +4,7 @@ from prefect_gcp.cloud_storage import GcsBucket
 credentials_block = GcpCredentials(
     service_account_info={
 }
+
   # enter your credentials from the json file inside the {}
 )
 credentials_block.save("dezoomcamp-gcp-creds", overwrite=True)
