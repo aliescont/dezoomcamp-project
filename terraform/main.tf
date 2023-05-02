@@ -48,6 +48,18 @@ resource "google_bigquery_dataset" "dataset" {
   location   = var.region
 }
 
+resource "google_bigquery_dataset" "dbt_prod_dataset" {
+  dataset_id = var.BQ_DBT_PROD_DATASET
+  project    = var.project
+  location   = var.region
+}
+
+resource "google_bigquery_dataset" "dbt_dev_dataset" {
+  dataset_id = var.BQ_DBT_DEV_DATASET
+  project    = var.project
+  location   = var.region
+}
+
 # Bigquery table
 # Ref: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/bigquery_table
 

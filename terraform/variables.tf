@@ -25,6 +25,18 @@ variable "BQ_DATASET" {
   default = "steam_data"
 }
 
+variable "BQ_DBT_PROD_DATASET" {
+  description = "BigQuery Dataset that raw data (from GCS) will be written to"
+  type = string
+  default = "steam_prod"
+}
+
+variable "BQ_DBT_DEV_DATASET" {
+  description = "BigQuery Dataset that raw data (from GCS) will be written to"
+  type = string
+  default = "dev"
+}
+
 variable "BQ_TABLE" {
   description = "BigQuery table that raw data (from GCS) will be written to"
   type = string

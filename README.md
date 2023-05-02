@@ -6,11 +6,14 @@ This is the final projet of [Data Engineering Zoomcamp](https://github.com/DataT
 Steam is a popular video game distribution platform. According to [Steam Usage and Catalog Stats for 2022](https://backlinko.com/steam-users) in 2022 had 120 million monthly active users, with more than half accessing to the platform at least once a day, which can give us information to analyse the popularity of a video game.   
 
 This project aims to build an end-to-end pipeline that can facilitate data processing to analyse users reviews, answering questions such as
-- Which games have received most bad reviews?
-- Top 20 games with good reviews.
-- What is the overall ratio of bad reviews vs total reviews?
+- What is the overall sentiment? most games are recommended or not?
+- What is the most active month in which reviews were created?
+- For the top 10 games with good reviews, how many bad reviews they have received?
+- What are the top free games that have received good reviews?
 
-For future projects, this pipeline can be used as the first step for a game recommendation system or to build a sentiment analysis for Steam games.
+For future projects, this pipeline can be used as the first step to build:
+- A game recommendation system.
+- A sentiment analysis app for Steam games.
 
 ## Datasets
 I've used 2 dataset from Kaggle:

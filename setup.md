@@ -14,6 +14,15 @@ Go to Account and create New API Token.
 ![Kaggle API](images/kaggle_api.png)
 This will download the kaggle.json file. Copy this file in prefect/.kaggle folder
 
+To create deployments you'll need to have kaggle.json in ./kaggle folder in root folder.
+Otherwise you can use environment method by adding doing adding this into ingest_to_gcs.py script
+
+```shell
+os.environ['KAGGLE_USERNAME'] = 'aliescont'
+os.environ['KAGGLE_KEY'] = '61c51b9c97987be49810bc909802542a'
+from kaggle.api.kaggle_api_extended import KaggleApi
+```
+
 ## GCP
 - Create a GCP free account
 - Create a new project (I've used dezoomcamp-steam)
@@ -25,11 +34,15 @@ This will download the kaggle.json file. Copy this file in prefect/.kaggle folde
 - Run the following commands, by updating the correct path for the service account key recently downloaded. This will allow you to have your local setup authenticated with the Cloud SDK.
 
 ```shell
-export GOOGLE_APPLICATION_CREDENTIALS="<service account key json path>"
+export GOOGLE_APPLICATION_CREDENTIALS="<service account key json path>"  
 
 gcloud auth application-default login
 ```
 After running the last command, type Y, when prompted and login in the same Google account where you set GCP.
+
+## Virtual Environment
+
+Create a virtual environment and install prefect/requirements.txt
 
 ## Terraform
 Terraform will be used to create dataset, GCS bucket and tables for ingesting data
@@ -83,7 +96,7 @@ To run dbt models using a Prefect deployment, we'll need to create blocks for db
 
 ```shell
 #Create a block for dbt cli to use prefect-dbt to run models using a Prefect deployment
-python make_dbt_creds_cli_block.py
+python make_dbt_cli_block.py
 ```
 
 This blocks can be also configured using the Prefect UI.
@@ -96,20 +109,20 @@ After creating Prefect blocks, we're able to create Prefect deployments
 #### Step 1 -> First, run python scripts to create deployments
 
 ```shell
-python3 docker-deploy.py
+python3 flows/docker-deploy.py
 ```
 
 This will create a deployment in the prefect UI called kaggle-to-gcs/docker-ingest-flow that will download data from Kaggle and ingest it in batches in a GCS bucket.
 
 ```shell
-python3 docker-bq-deploy.py
+python3 flows/docker-bq-deploy.py
 ```
 
 This will create a deployment in the prefect UI called etl-gcs-to-bq/docker-bq-flow that will ingest data from GCS bucket to BigQuery tables, which are going to be used as sources in dbt for do transformations.
 
 
 ```shell
-python3 dbt_cli_deploy.py
+python3 flows/dbt_cli_deploy.py
 ```
 
 This will create a deployment in the prefect UI called trigger-dbt-cli-run/dbt-core-cli-run that will create dbt models in production dataset.
@@ -126,7 +139,7 @@ prefect agent start -q default
 
 #### Step 3 -> Run deployments
 
-First, download datasets and ingest data into GCS bucket
+First, download datasets and ingest data into GCS bucket by running this deployment 
 
 ```shell
 prefect deployment run kaggle-to-gcs/docker-ingest-flow
