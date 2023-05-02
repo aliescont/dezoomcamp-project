@@ -165,11 +165,3 @@ prefect deployment run tvrigger-dbt-cli-run/dbt-core-cli-run
 ```
 This will create tables in production dataset and Prefect deployment logs will look like ![this](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_cli.png)
 
-## DBT Cloud
-In Prefect section we're using dbt core to run dbt models in production. Another option is to run dbt cloud
-Step 1 -> Create a dbt cloud account. 
-Step 2 -> Fork this repo.
-Step 3 -> Connect your dbt cloud account with Github repo where you fork this repo.
-Step 4 -> In the Account settings of your dbt cloud account make sure to use service account key downloaded before.
-Step 5 -> After running prefect flows for ingesting data into a Data Lake and then into BigQuery, update sources in dbt project as needed with the corresponding project_id and create a dbt cloud job with dbt run command.
-Step 6 -> Run dbt job to visualize data.

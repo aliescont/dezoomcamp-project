@@ -51,13 +51,13 @@ Some of the considerations taken when building this pipeline
 - The datasets used for this project have being extracted from the Steam API at a given time. So, batch processing was selected to ingest this static data into batches to optimize ingestion, but there is no need to use for this use case streaming processing.  
 - Data about users' reviews ingested into BigQuery, used as dbt sources, is partitioned by the month in which reviews were created. This was done to optimize query performance when analysing users' reviews in a specific time frame.  
 
-[Diagram](https://github.com/aliescont/dezoomcamp-project/blob/main/images/project_diagram.png)
+![Diagram](https://github.com/aliescont/dezoomcamp-project/blob/main/images/project_diagram.png)
 
 - Fact table is created using the same partitioned as in source and clustered by "recommended" and "game_name" because these are fields most likely used to analyse users' behaviours in general and for a specific games. This is the lineage created to transform raw data into a data suitable for analysis.
 
-[DBT Lineage](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_steam_lineage.png)
+![DBT Lineage](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dbt_steam_lineage.png)
  
 ## Dashboard
-[Dashboard](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dashboard_steam_reviews_agg.png)
+![Dashboard](https://github.com/aliescont/dezoomcamp-project/blob/main/images/dashboard_steam_reviews_agg.png)
 
 
